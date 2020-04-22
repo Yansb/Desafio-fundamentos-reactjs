@@ -18,24 +18,33 @@ interface FileProps {
   readableSize: string;
 }
 
+// https://www.youtube.com/watch?v=G5UZmvkLWSQ
+
 const Import: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<FileProps[]>([]);
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
-
-    // TODO
-
+    const data = new FormData();
+    uploadedFiles.forEach(newfile =>
+      data.append('file', newfile.file, newfile.name),
+    );
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
     } catch (err) {
-      // console.log(err.response.error);
+      console.log(err.response.error);
     }
+    history.push('/');
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    const uploadedFile = files.map(file => ({
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    }));
+
+    setUploadedFiles(uploadedFile);
   }
 
   return (
